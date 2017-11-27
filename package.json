@@ -1,0 +1,22 @@
+{
+  "name": "officebot",
+  "version": "0.1.0",
+  "description": "A slack office bot.",
+  "scripts": {
+    "start": "node src/index.js",
+    "scheduleCleaning": "node src/tasks/assignCleaningDuty.js"
+  },
+  "author": "Jakob Arnell",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "^3.14.2",
+    "axios": "^0.17.1",
+    "lodash": "^4.17.4",
+    "redis": "^2.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
+}
