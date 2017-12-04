@@ -65,10 +65,10 @@ class Message {
    * @return {string|boolean} Extracted issue number OR false if there was none.
    */
   getIssueNumber() {
-    const issueRegEx = /([A-Z]{2,12}-[0-9]{1,5}\b)/i;
+    const issueRegEx = /(?:^|\s)([A-Z]{2,12}-[0-9]{1,5}\b)/i;
     const issueMatch = this.message.text.match(issueRegEx);
     if (issueMatch !== null) {
-      return issueMatch[0].toUpperCase();
+      return issueMatch[1].toUpperCase();
     }
     return false;
   }
