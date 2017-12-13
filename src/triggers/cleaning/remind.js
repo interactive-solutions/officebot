@@ -6,7 +6,7 @@ const REMIND_COOLDOWN_SECONDS = 60 * 60 * 12;
 const REMIND_MESSAGES = [
   'Glöm inte bort att ni har städvecka ',
   'Någon tycker det är stökigt ',
-  'Eran mamma jobbar inte här, dags att städa ',
+  'Era mammor jobbar inte här, dags att städa ',
   'Trist att jag måste påminna er, men ni har städvecka ',
 ];
 
