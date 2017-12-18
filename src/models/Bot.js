@@ -142,7 +142,7 @@ class Bot {
         i++;
 
         // Check if we should store this user (not a bot, not deleted)
-        if (!user.is_bot && user.id !== 'USLACKBOT' && !user.deleted) {
+        if (!user.is_bot && user.id !== 'USLACKBOT' && user.id !== 'jetbrains' && !user.deleted) {
           // Look up if this user is already stored
           this.rdsCli.hget(`user:${user.id}`, 'id', (err, reply) => {
             if (err) {
