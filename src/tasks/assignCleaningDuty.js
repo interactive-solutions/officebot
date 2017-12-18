@@ -124,8 +124,8 @@ const assignCleaningDuty = (bot) => {
 
 try {
   // Get env vars
-  const { SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, REDIS_URL } = process.env;
-  if (!SLACK_TOKEN || !ANNOUNCEMENT_CHANNEL_ID || !REDIS_URL) {
+  const { SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, REDIS_URL_V2 } = process.env;
+  if (!SLACK_TOKEN || !ANNOUNCEMENT_CHANNEL_ID || !REDIS_URL_V2) {
     throw new Error('Required environment vars missing.');
   }
 

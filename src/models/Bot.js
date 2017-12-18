@@ -18,7 +18,7 @@ class Bot {
     this.announcementChannelId = announcementChannelId;
     this.slackUsers = null;
     this.task = task;
-    this.rdsCli = redis.createClient(process.env.REDIS_URL);
+    this.rdsCli = redis.createClient(process.env.REDIS_URL_V2);
 
     // Set listeners and start
     this._setListeners();
