@@ -73,7 +73,9 @@ const sendIssueReminders = (users, bot) => {
       }
 
       // Send IM to user with issues
-      // bot.sendIM(message, slackId, { attachments });
+      if (user === 'jakob.arnell') {
+        bot.sendIM(message, slackId, { attachments });
+      }
       console.log(message);
       console.log(user);
       console.log(attachments);
