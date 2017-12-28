@@ -1,4 +1,6 @@
-const { RtmClient, RTM_EVENTS, CLIENT_EVENTS } = require('@slack/client');
+const {
+  RtmClient, WebClient, RTM_EVENTS, CLIENT_EVENTS,
+} = require('@slack/client');
 const _ = require('lodash');
 const redis = require('redis');
 const axios = require('axios');
@@ -13,12 +15,17 @@ const YOUTRACK_LINK_COOLDOWN_SECONDS = 60 * 60 * 4;
 class Bot {
   constructor(token, announcementChannelId, task = false) {
     // Set props
-    this.rtm = new RtmClient(token, { logLevel: 'error' });
+    this.rtm = new RtmClient(token, { logLevel: 'error', dataStore: false });
     this.botId = null;
     this.announcementChannelId = announcementChannelId;
     this.slackUsers = null;
     this.task = task;
     this.rdsCli = redis.createClient(process.env.REDIS_URL_V2);
+
+    // Start web client if bot is running a task
+    if (this.task) {
+      this.web = new WebClient(token);
+    }
 
     // Set listeners and start
     this._setListeners();
@@ -64,7 +71,7 @@ class Bot {
   }
 
   /**
-   * Sends a message to the specified channel.
+   * Sends a message to the specified channel via the RTM client.
    */
   sendMessage(message, channel, showTyping = true) {
     if (showTyping) {
@@ -77,6 +84,55 @@ class Bot {
       // Send without typing
       this.rtm.sendMessage(message, channel);
     }
+  }
+
+  /**
+   * Sends a message to the specified channel via the web client.
+   */
+  sendWebMessage(message, channel, opts = {}) {
+    if (this.web) {
+      this.web.chat.postMessage(channel, message, {
+        ...opts,
+        as_user: true,
+        unfurl_links: false,
+        unfurl_media: false,
+      });
+    }
+  }
+
+  /**
+   * Send an IM to the specified Slack user id.
+   */
+  sendIM(message, slackId, opts = {}) {
+    if (message && slackId && this.web) {
+      try {
+        this.web.im.open(slackId, (err, data) => {
+          if (data.ok && data.channel) {
+            this.sendWebMessage(message, data.channel.id, opts);
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
+  /**
+   * Returns Slack user id from Youtrack user id by matching on email.
+   */
+  getSlackIdFromYoutrackId(youtrackId) {
+    const slackUser = _.find(
+      this.slackUsers,
+      user =>
+        // Search for user with email that starts with slackId or slackId before the dot
+        _.startsWith(user.profile.email, `${youtrackId}@`) ||
+        _.startsWith(user.profile.email, `${youtrackId}@`.split('.')[0]),
+    );
+    if (slackUser) {
+      return slackUser.id;
+    }
+
+    return null;
   }
 
   /**
@@ -239,8 +295,7 @@ class Bot {
    */
   _handleMessageWithIssueNumber(message) {
     // Only run if YouTrack token is available
-    if (process.env.YOUTRACK_TOKEN) {
-      const baseUrl = 'https://youtrack.interactivesolutions.se';
+    if (process.env.YOUTRACK_TOKEN && process.env.YOUTRACK_URL) {
       const issueNumber = message.getIssueNumber();
 
       // Check if we already posted a link in channel recently
@@ -252,7 +307,7 @@ class Bot {
 
           // Lookup issue number in YouTrack api
           axios
-            .get(`${baseUrl}/rest/issue/${issueNumber}`, {
+            .get(`${process.env.YOUTRACK_URL}/rest/issue/${issueNumber}`, {
               headers: {
                 Authorization: `Bearer ${process.env.YOUTRACK_TOKEN}`,
                 Accept: 'application/json',
@@ -260,7 +315,7 @@ class Bot {
             })
             .then(({ data }) => {
               const name = _.find(data.field, { name: 'summary' }).value; // Extract issue name
-              const url = `${baseUrl}/issue/${issueNumber}`; // Create issue link
+              const url = `${process.env.YOUTRACK_URL}/issue/${issueNumber}`; // Create issue link
               const responseMsg = `:youtrack: *${issueNumber}*: _${name}_\n${url}`;
 
               // Post response in channel
