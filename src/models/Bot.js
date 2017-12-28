@@ -126,7 +126,7 @@ class Bot {
       user =>
         // Search for user with email that starts with slackId or slackId before the dot
         _.startsWith(user.profile.email, `${youtrackId}@`) ||
-        _.startsWith(user.profile.email, `${youtrackId}@`.split('.')[0]),
+        _.startsWith(user.profile.email, `${youtrackId.split('.')[0]}@`),
     );
     if (slackUser) {
       return slackUser.id;
@@ -145,7 +145,7 @@ class Bot {
     setTimeout(() => {
       this.rtm.disconnect();
       process.exit();
-    }, 5000);
+    }, 7000);
   }
 
   /**
