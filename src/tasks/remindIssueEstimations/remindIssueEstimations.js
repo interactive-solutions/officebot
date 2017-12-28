@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { getIssuesWithoutEstimations, getIssuesWithoutAssignees } = require('./getIssues');
 const { sendIssueReminders } = require('./sendIssueReminders');
 
-const REMIND_COOLDOWN_SECONDS = 20;
+const REMIND_COOLDOWN_SECONDS = 60; // To make sure we are not spamming
 
 /**
  * Remind issue estimations task

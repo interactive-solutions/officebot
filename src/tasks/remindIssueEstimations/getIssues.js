@@ -23,6 +23,8 @@ const NO_ASSIGNEES_FILTER = encodeURIComponent(`
   sort by:updated
 `);
 
+const REQUEST_WITH = '&with=assignee&with=reporterName&with=summary';
+
 /**
  * Returns recent issues without estimations
  */
@@ -30,8 +32,8 @@ const getIssuesWithoutEstimations = async () => {
   // Get recently updated tasks without estimations
   try {
     const req = await axios.get(`
-      ${process.env.YOUTRACK_URL}/rest/issue?max=10&filter=
-      ${NO_ESTIMATION_FILTER}`);
+      ${process.env.YOUTRACK_URL}/rest/issue?max=100&filter=
+      ${NO_ESTIMATION_FILTER}${REQUEST_WITH}`);
 
     const issues = [];
 
@@ -58,8 +60,8 @@ const getIssuesWithoutAssignees = async () => {
   // Get recently updated tasks without assignees
   try {
     const req = await axios.get(`
-      ${process.env.YOUTRACK_URL}/rest/issue?max=10&filter=
-      ${NO_ASSIGNEES_FILTER}`);
+      ${process.env.YOUTRACK_URL}/rest/issue?max=100&filter=
+      ${NO_ASSIGNEES_FILTER}${REQUEST_WITH}`);
 
     const issues = [];
 

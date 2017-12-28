@@ -56,18 +56,21 @@ const sendIssueReminders = (users, bot) => {
       if (noEstimationIssues.length > 0 && noAssigneesIssues.length > 0) {
         // User has issues to estimate AND assign
         attachments = _.map(_.slice(issues, 0, 15), issue => createSlackAttachmentFromIssue(issue));
+
         message = `${getRandomGreeting()} ${pickRandomMessage(ESTIMATE_AND_ASSIGN_MESSAGES,
         )}, ${pickRandomMessage(QUESTION_MESSAGES)} ${pickRandomMessage(EMOJIS)}`; // eslint-disable-line
       } else if (noEstimationIssues.length > 0) {
         // User has issues to estimate
         attachments = _.map(_.slice(noEstimationIssues, 0, 10), issue =>
           createSlackAttachmentFromIssue(issue));
+
         message = `${getRandomGreeting()} ${pickRandomMessage(ESTIMATE_MESSAGES,
         )}, ${pickRandomMessage(QUESTION_MESSAGES)} ${pickRandomMessage(EMOJIS)}`; // eslint-disable-line
       } else if (noAssigneesIssues.length > 0) {
         // User has issues to assign
         attachments = _.map(_.slice(noAssigneesIssues, 0, 10), issue =>
           createSlackAttachmentFromIssue(issue));
+
         message = `${getRandomGreeting()} ${pickRandomMessage(ASSIGN_MESSAGES,
         )}, ${pickRandomMessage(QUESTION_MESSAGES)} ${pickRandomMessage(EMOJIS)}`; // eslint-disable-line
       }
@@ -76,9 +79,6 @@ const sendIssueReminders = (users, bot) => {
       if (user === 'jakob.arnell') {
         bot.sendIM(message, slackId, { attachments });
       }
-      console.log(message);
-      console.log(user);
-      console.log(attachments);
     }
   });
 };
@@ -90,7 +90,7 @@ const createSlackAttachmentFromIssue = (issue) => {
   const issueName = _.get(_.find(issue.issue.field, { name: 'summary' }), 'value', '');
   const title = `${issue.issue.id}: ${issueName}`;
   const title_link = `${process.env.YOUTRACK_URL}/issue/${issue.issue.id}`; // eslint-disable-line
-  const color = issue.type === 'NO_ASSIGNEES' ? '#cb0059' : '#2baa84';
+  const color = issue.type === 'NO_ASSIGNEES' ? '#cb0059' : '#6900ff';
   return {
     title: `:youtrack: ${title}`,
     title_link,
