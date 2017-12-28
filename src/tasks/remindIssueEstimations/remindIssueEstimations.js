@@ -25,7 +25,6 @@ const remindIssueEstimations = async (bot) => {
       // Concat issue arrays and group by user
       const issues = [...noEstimations, ...noAssignees];
       const groupedIssues = _.groupBy(issues, 'user');
-      console.log(groupedIssues);
 
       await sendIssueReminders(groupedIssues, bot);
     } else {
