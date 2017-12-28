@@ -14,6 +14,8 @@ const GREETINGS = [
   'Nej men hej på dig du!',
   'Halli hallå!',
   'Goddag!',
+  'Tja!',
+  'Hejhej!',
 ];
 
 module.exports = { pickRandomMessage, getRandomComplyWord, getRandomGreeting };
