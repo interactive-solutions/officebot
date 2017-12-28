@@ -6,6 +6,7 @@ A node.js Slack office bot made for Interactive Solutions AB to help with office
 
 * Decides who is in charge of cleaning on a weekly basis and reminds them.
 * Links to YouTrack issues when an issue number is mentioned in a channel.
+* Reminds users to estimate and assign new YouTrack tasks.
 
 ## To do
 
