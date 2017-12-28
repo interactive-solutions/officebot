@@ -1,7 +1,21 @@
-const pickRandomMessage = messages => messages[Math.floor(Math.random() * messages.length)];
+const _ = require('lodash');
 
-const getRandomComplyWord = () => COMPLY_WORDS[Math.floor(Math.random() * COMPLY_WORDS.length)];
+const pickRandomMessage = messages => _.sample(messages);
 
+const getRandomComplyWord = () => pickRandomMessage(COMPLY_WORDS);
 const COMPLY_WORDS = ['Okej', 'Ok', 'Sure', 'Aight', 'Cool', 'Yes', 'Okidoki', 'Alright'];
 
-module.exports = { pickRandomMessage, getRandomComplyWord };
+const getRandomGreeting = () => pickRandomMessage(GREETINGS);
+const GREETINGS = [
+  'Hallå där!',
+  'Hej!',
+  'Hejsan!',
+  'Tjena!',
+  'Nej men hej på dig du!',
+  'Halli hallå!',
+  'Goddag!',
+  'Tja!',
+  'Hejhej!',
+];
+
+module.exports = { pickRandomMessage, getRandomComplyWord, getRandomGreeting };

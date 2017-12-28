@@ -4,7 +4,8 @@
   "description": "A slack office bot.",
   "scripts": {
     "start": "node src/index.js",
-    "scheduleCleaning": "node src/tasks/assignCleaningDuty.js"
+    "scheduleCleaning": "node src/tasks/assignCleaningDuty.js",
+    "remindIssueEstimations": "node src/tasks/remindIssueEstimations"
   },
   "author": "Jakob Arnell",
   "license": "MIT",
