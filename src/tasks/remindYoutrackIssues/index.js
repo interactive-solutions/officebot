@@ -1,5 +1,5 @@
 const Bot = require('../../models/Bot');
-const { remindIssueEstimations } = require('./remindIssueEstimations');
+const { remindYoutrackIssues } = require('./remindYoutrackIssues');
 
 try {
   // Get env vars
@@ -21,7 +21,7 @@ try {
   }
 
   // Create bot instance and pass task to be run after it is initialized
-  const bot = new Bot(SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, remindIssueEstimations); // eslint-disable-line
+  const bot = new Bot(SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, remindYoutrackIssues); // eslint-disable-line
 } catch (e) {
   console.error(e);
 }

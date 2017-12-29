@@ -1,5 +1,9 @@
 const _ = require('lodash');
-const { getIssuesWithoutEstimations, getIssuesWithoutAssignees } = require('./getIssues');
+const {
+  getIssuesWithoutTimeSpent,
+  getIssuesWithoutEstimation,
+  getIssuesWithoutAssignees,
+} = require('./getIssues');
 const { sendIssueReminders } = require('./sendIssueReminders');
 
 const REMIND_COOLDOWN_SECONDS = 60 * 60; // To make sure we are not spamming
@@ -7,7 +11,7 @@ const REMIND_COOLDOWN_SECONDS = 60 * 60; // To make sure we are not spamming
 /**
  * Remind issue estimations task
  */
-const remindIssueEstimations = async (bot) => {
+const remindYoutrackIssues = async (bot) => {
   // Make sure we didn't run this task recently
   const rdsCli = bot.getRdsCli();
   rdsCli.get('lastRemindIssueEstimations', async (err, reply) => {
@@ -15,15 +19,17 @@ const remindIssueEstimations = async (bot) => {
       rdsCli.set('lastRemindIssueEstimations', Date.now(), 'EX', REMIND_COOLDOWN_SECONDS);
 
       // Get issues
-      const noEstimationsPromise = getIssuesWithoutEstimations();
+      const noTimeSpentPromise = getIssuesWithoutTimeSpent();
+      const noEstimationPromise = getIssuesWithoutEstimation();
       const noAssigneesPromise = getIssuesWithoutAssignees();
-      const [noEstimations, noAssignees] = await Promise.all([
-        noEstimationsPromise,
+      const [noTimeSpent, noEstimation, noAssignees] = await Promise.all([
+        noTimeSpentPromise,
+        noEstimationPromise,
         noAssigneesPromise,
       ]);
 
       // Concat issue arrays and group by user
-      const issues = [...noEstimations, ...noAssignees];
+      const issues = [...noTimeSpent, ...noEstimation, ...noAssignees];
       const groupedIssues = _.groupBy(issues, 'user');
 
       await sendIssueReminders(groupedIssues, bot);
@@ -36,4 +42,4 @@ const remindIssueEstimations = async (bot) => {
   });
 };
 
-module.exports = { remindIssueEstimations };
+module.exports = { remindYoutrackIssues };
