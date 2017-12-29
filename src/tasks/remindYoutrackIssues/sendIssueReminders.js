@@ -116,15 +116,37 @@ const getSlackAttachment = (issue, first) => {
 
   const issueName = _.get(_.find(issue.issue.field, { name: 'summary' }), 'value', '');
   const title = `${issue.issue.id}: ${issueName}`;
-  const title_link = `${process.env.YOUTRACK_URL}/issue/${issue.issue.id}`; // eslint-disable-line
+  const titleLink = `${process.env.YOUTRACK_URL}/issue/${issue.issue.id}`;
   const color = _.get(ATTCH_COLORS, issue.type);
+
+  let callbackId = '';
+  const actions = [];
+  if (issue.type === 'NO_ESTIMATION') {
+    callbackId = 'estimate';
+    actions.push(
+      {
+        type: 'button',
+        name: 'game',
+        text: '30m',
+        value: '30m',
+      },
+      {
+        type: 'button',
+        name: 'game',
+        text: '1h',
+        value: '1h',
+      },
+    );
+  }
 
   return {
     pretext,
     title: `:youtrack: ${title}`,
-    title_link,
+    title_link: titleLink,
     color,
     fallback: title,
+    actions,
+    callback_id: callbackId,
     mrkdwn_in: ['pretext'],
   };
 };

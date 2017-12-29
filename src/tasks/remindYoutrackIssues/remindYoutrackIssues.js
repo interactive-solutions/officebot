@@ -6,7 +6,7 @@ const {
 } = require('./getIssues');
 const { sendIssueReminders } = require('./sendIssueReminders');
 
-const REMIND_COOLDOWN_SECONDS = 60 * 60; // To make sure we are not spamming
+const REMIND_COOLDOWN_SECONDS = 10; // To make sure we are not spamming
 
 /**
  * Remind issue estimations task
