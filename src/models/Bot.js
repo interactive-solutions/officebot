@@ -121,13 +121,20 @@ class Bot {
    * Returns Slack user id from Youtrack user id by matching on email.
    */
   getSlackIdFromYoutrackId(youtrackId) {
-    const slackUser = _.find(
+    // Try to find slack user with email that starts with youtrack id
+    let slackUser = _.find(
       this.slackUsers,
-      user =>
-        // Search for user with email that starts with slackId or slackId before the dot
-        _.startsWith(user.profile.email, `${youtrackId}@`) ||
-        _.startsWith(user.profile.email, `${youtrackId.split('.')[0]}@`),
+      user => _.startsWith(user.profile.email, `${youtrackId}@`) && !user.deleted,
     );
+
+    // If not found, also try to find email with only first name
+    if (!slackUser) {
+      slackUser = _.find(
+        this.slackUsers,
+        user => _.startsWith(user.profile.email, `${youtrackId.split('.')[0]}@`) && !user.deleted,
+      );
+    }
+
     if (slackUser) {
       return slackUser.id;
     }
