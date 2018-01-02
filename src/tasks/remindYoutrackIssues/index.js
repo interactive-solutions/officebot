@@ -22,6 +22,7 @@ try {
 
   const day = new Date().getDay();
   if (day >= 1 && day <= 5) {
+    console.log('Running task...');
     // Create bot instance and pass task to be run after it is initialized
     const bot = new Bot(SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, remindYoutrackIssues); // eslint-disable-line
   } else {

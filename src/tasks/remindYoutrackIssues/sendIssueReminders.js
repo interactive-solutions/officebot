@@ -34,9 +34,9 @@ const EMOJIS = [
 ];
 
 const ATTCH_PRETEXTS = {
-  NO_TIME_SPENT: ':clock3: - saknar tidrapportering',
-  NO_ESTIMATION: ':speech_balloon: - saknar estimering',
-  NO_ASSIGNEES: ':raising_hand: - saknar assignees',
+  NO_TIME_SPENT: ':clock3: - *Saknar tidrapportering*',
+  NO_ESTIMATION: ':speech_balloon: - *Saknar estimering*',
+  NO_ASSIGNEES: ':raising_hand: - *Saknar assignees*',
 };
 
 const ATTCH_COLORS = {
@@ -44,6 +44,8 @@ const ATTCH_COLORS = {
   NO_ESTIMATION: '#6900ff',
   NO_ASSIGNEES: '#cb0059',
 };
+
+const ACTIONS = ['30m', '1h', '2h', '4h', '1d'];
 
 /**
  * Sends reminders to Slack
@@ -76,6 +78,7 @@ const sendIssueReminders = (users, bot) => {
           _.map(_.slice(noTimeSpentIssues, 0, 10), (issue, index) =>
             getSlackAttachment(issue, index === 0)),
         );
+        attachments.push(getEmptySlackAttachment());
       }
 
       // Add issues without estimations
@@ -85,6 +88,7 @@ const sendIssueReminders = (users, bot) => {
           _.map(_.slice(noEstimationIssues, 0, 10), (issue, index) =>
             getSlackAttachment(issue, index === 0)),
         );
+        attachments.push(getEmptySlackAttachment());
       }
 
       // Add issues without assignees
@@ -94,6 +98,7 @@ const sendIssueReminders = (users, bot) => {
           _.map(_.slice(noAssigneesIssues, 0, 10), (issue, index) =>
             getSlackAttachment(issue, index === 0)),
         );
+        attachments.push(getEmptySlackAttachment());
       }
 
       // Send IM to user with the issues
@@ -116,17 +121,41 @@ const getSlackAttachment = (issue, first) => {
 
   const issueName = _.get(_.find(issue.issue.field, { name: 'summary' }), 'value', '');
   const title = `${issue.issue.id}: ${issueName}`;
-  const title_link = `${process.env.YOUTRACK_URL}/issue/${issue.issue.id}`; // eslint-disable-line
+  const titleLink = `${process.env.YOUTRACK_URL}/issue/${issue.issue.id}`;
   const color = _.get(ATTCH_COLORS, issue.type);
+  const callbackId = `${issue.type}#${issue.issue.id}#${issue.user}`;
+  const actions = getActions(issue.type);
 
   return {
     pretext,
     title: `:youtrack: ${title}`,
-    title_link,
+    title_link: titleLink,
     color,
     fallback: title,
+    actions,
+    callback_id: callbackId,
     mrkdwn_in: ['pretext'],
   };
+};
+
+const getEmptySlackAttachment = () => ({
+  text: '\u2063',
+  color: '#fafafa',
+});
+
+const getActions = (type) => {
+  switch (type) {
+    case 'NO_ESTIMATION':
+    case 'NO_TIME_SPENT':
+      return _.map(ACTIONS, action => ({
+        type: 'button',
+        name: 'choice',
+        value: action,
+        text: action,
+      }));
+    default:
+      return [];
+  }
 };
 
 module.exports = { sendIssueReminders };

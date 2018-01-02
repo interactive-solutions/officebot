@@ -6,7 +6,7 @@ const {
 } = require('./getIssues');
 const { sendIssueReminders } = require('./sendIssueReminders');
 
-const REMIND_COOLDOWN_SECONDS = 60 * 60; // To make sure we are not spamming
+const REMIND_COOLDOWN_SECONDS = 20; // To make sure we are not spamming
 
 /**
  * Remind issue estimations task
@@ -14,9 +14,9 @@ const REMIND_COOLDOWN_SECONDS = 60 * 60; // To make sure we are not spamming
 const remindYoutrackIssues = async (bot) => {
   // Make sure we didn't run this task recently
   const rdsCli = bot.getRdsCli();
-  rdsCli.get('lastRemindIssueEstimations', async (err, reply) => {
+  rdsCli.get('lastYoutrackReminders', async (err, reply) => {
     if (!reply) {
-      rdsCli.set('lastRemindIssueEstimations', Date.now(), 'EX', REMIND_COOLDOWN_SECONDS);
+      rdsCli.set('lastYoutrackReminders', Date.now(), 'EX', REMIND_COOLDOWN_SECONDS);
 
       // Get issues
       const noTimeSpentPromise = getIssuesWithoutTimeSpent();
