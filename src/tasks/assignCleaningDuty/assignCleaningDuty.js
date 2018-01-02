@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const Bot = require('../models/Bot');
 
-const { pickRandomMessage } = require('../utils/randomMessage');
+const { pickRandomMessage } = require('../../utils/randomMessage');
 
 const GREETING_MESSAGES = [
   'God morgon! :sunny:',
@@ -122,23 +121,4 @@ const assignCleaningDuty = (bot) => {
   });
 };
 
-try {
-  // Get env vars
-  const { SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, REDIS_URL_V2 } = process.env;
-  if (!SLACK_TOKEN || !ANNOUNCEMENT_CHANNEL_ID || !REDIS_URL_V2) {
-    throw new Error('Required environment vars missing.');
-  }
-
-  if (new Date().getDay() === 1) {
-    // Only run on Mondays
-
-    console.log("It's Monday, assign cleaning duty...");
-
-    // Create bot instance and pass task to be run after it is initialized
-    const bot = new Bot(SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, assignCleaningDuty); // eslint-disable-line
-  } else {
-    console.log('Not Monday... maybe tomorrow?');
-  }
-} catch (e) {
-  console.error(e);
-}
+module.exports = { assignCleaningDuty };

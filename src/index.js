@@ -1,15 +1,13 @@
 const Bot = require('./models/Bot');
+const { startServer } = require('./server');
+const { startCron } = require('./tasks/cron');
 
 try {
-  // Get env vars
-  const { SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID, REDIS_URL_V2 } = process.env;
-  if (!SLACK_TOKEN || !ANNOUNCEMENT_CHANNEL_ID || !REDIS_URL_V2) {
-    throw new Error('Required environment vars missing.');
-  }
+  console.log('Starting bot..');
+  const bot = new Bot(process.env.SLACK_TOKEN); // eslint-disable-line
 
-  const bot = new Bot(SLACK_TOKEN, ANNOUNCEMENT_CHANNEL_ID); // eslint-disable-line
-
-  console.log('Starting RTM socket...');
+  startServer();
+  startCron();
 } catch (e) {
   console.error(e);
 }

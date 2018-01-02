@@ -1,0 +1,8 @@
+.git
+data
+node_modules
+*.env
+*.md
+dump.rdb
+LICENSE
+Procfile

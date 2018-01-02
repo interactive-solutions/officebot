@@ -3,12 +3,14 @@ const bodyParser = require('body-parser');
 
 const { slackActionRouter } = require('./slackActionRouter');
 
-const PORT = process.env.PORT || 3000;
+const startServer = () => {
+  const app = express();
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
-const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+  app.post('/slack/message_action', (req, res) => slackActionRouter(req, res));
 
-app.post('/slack/message_action', (req, res) => slackActionRouter(req, res));
+  app.listen(3000, () => console.log('Starting express - listening on port 3000.'));
+};
 
-app.listen(PORT, () => console.log(`Starting express - listening on port ${PORT}.`));
+module.exports = { startServer };

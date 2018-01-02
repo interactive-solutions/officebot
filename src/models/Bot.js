@@ -13,14 +13,19 @@ const { pickRandomMessage } = require('../utils/randomMessage');
 const YOUTRACK_LINK_COOLDOWN_SECONDS = 60 * 60 * 4;
 
 class Bot {
-  constructor(token, announcementChannelId, task = false) {
+  constructor(token, task = null) {
+    // Throw error if required vars are missing
+    if (!token || !process.env.YOUTRACK_TOKEN || !process.env.ANNOUNCEMENT_CHANNEL_ID) {
+      throw new Error('Missing required env vars.');
+    }
+
     // Set props
     this.rtm = new RtmClient(token, { logLevel: 'error', dataStore: false });
     this.botId = null;
-    this.announcementChannelId = announcementChannelId;
+    this.announcementChannelId = process.env.ANNOUNCEMENT_CHANNEL_ID;
     this.slackUsers = null;
     this.task = task;
-    this.rdsCli = redis.createClient(process.env.REDIS_URL_V2);
+    this.rdsCli = redis.createClient(6379, 'redis');
 
     // Start web client if bot is running a task
     if (this.task) {
@@ -151,7 +156,6 @@ class Bot {
     // Wait a few seconds so potential messages can be sent before socket is closed
     setTimeout(() => {
       this.rtm.disconnect();
-      process.exit();
     }, 7000);
   }
 
