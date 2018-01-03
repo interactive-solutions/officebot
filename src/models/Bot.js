@@ -28,9 +28,9 @@ class Bot {
     this.rdsCli = redis.createClient(6379, 'redis');
 
     // Start web client if bot is running a task
-    if (this.task) {
-      this.web = new WebClient(token);
-    }
+    // if (this.task) {
+    this.web = new WebClient(token);
+    // }
 
     // Set listeners and start
     this._setListeners();
@@ -325,12 +325,57 @@ class Bot {
               },
             })
             .then(({ data }) => {
-              const name = _.find(data.field, { name: 'summary' }).value; // Extract issue name
+              const name = _.get(_.find(data.field, { name: 'summary' }), 'value');
+
+              const description = _.truncate(
+                _.replace(_.get(_.find(data.field, { name: 'description' }), 'value'), /\n/g, ''),
+                { length: 170 },
+              );
+
+              const assignees = _.chain(data.field)
+                .find({ name: 'Assignee' })
+                .get('value')
+                .map(assignee => assignee.fullName)
+                .join(', ')
+                .value();
+
+              const state = _.find(data.field, { name: 'State' });
+              let stateName = _.head(_.get(state, 'value'));
+              const stateColor = _.get(_.get(state, 'color'), 'fg');
+
+              const creator = _.get(_.find(data.field, { name: 'reporterFullName' }), 'value');
+              const created = _.get(_.find(data.field, { name: 'created' }), 'value') / 1000;
+              const resolvedAt = _.get(_.find(data.field, { name: 'resolved' }), 'value');
               const url = `${process.env.YOUTRACK_URL}/issue/${issueNumber}`; // Create issue link
-              const responseMsg = `:youtrack: *${issueNumber}*: _${name}_\n${url}`;
+              const title = `${issueNumber}: ${name}`;
+              // const color = '#6900ff';
+
+              if (resolvedAt) {
+                stateName = `:white_check_mark: ${stateName}`;
+              }
+
+              const fields = [
+                { title: 'State', value: stateName, short: true },
+                { title: 'Assignees', value: assignees || 'Unnassigned', short: true },
+              ];
+
+              const opts = {
+                attachments: [
+                  {
+                    title_link: url,
+                    title: `:youtrack: ${title}`,
+                    fallback: title,
+                    text: description,
+                    color: stateColor,
+                    footer: creator,
+                    ts: created,
+                    fields,
+                  },
+                ],
+              };
 
               // Post response in channel
-              this.sendMessage(responseMsg, message.getChannel(), false);
+              this.sendWebMessage('', message.getChannel(), opts);
             })
             .catch(() => {
               // Api did not return a valid issue - do nothing!

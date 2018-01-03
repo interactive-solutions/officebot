@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { timeReportIssue, estimateIssue } = require('./youtrackActions');
+const { timeReportIssue, estimateIssue } = require('../utils/youtrackActions');
 
 const ERROR_MSG = 'Något gick fel. Försök igen senare!';
 
-const slackActionRouter = (req, res) => {
+const slackMessageAction = (req, res) => {
   // Parse payload
   let payload = {};
   try {
@@ -110,4 +110,4 @@ const error = () => ({
   text: ERROR_MSG,
 });
 
-module.exports = { slackActionRouter };
+module.exports = { slackMessageAction };
