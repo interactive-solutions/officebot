@@ -4,9 +4,18 @@ const _ = require('lodash');
 axios.defaults.headers.common.Authorization = `Bearer ${process.env.YOUTRACK_TOKEN}`;
 axios.defaults.headers.common.Accept = 'application/json';
 
+let updatedFilter = 'today,yesterday';
+
+// Include issues updated on Friday and weekend if it's Monday
+const today = new Date();
+if (today.getDay() === 1) {
+  today.setDate(today.getDate() - 3);
+  updatedFilter = `${today.toISOString().slice(0, 10)} .. today`;
+}
+
 // Search filter for tasks that should be time tracked
 const NO_TIME_SPENT_FILTER = encodeURIComponent(`
-  updated:today,yesterday
+  updated:${updatedFilter}
   created:2018-01 .. today
   assignee:-unassigned
   state:resolved,{waiting for deploy *},{ready for test *}
@@ -17,7 +26,7 @@ const NO_TIME_SPENT_FILTER = encodeURIComponent(`
 
 // Search filter for tasks that should be estimated
 const NO_ESTIMATION_FILTER = encodeURIComponent(`
-  updated:today,yesterday
+  updated:${updatedFilter}
   created:2018-01 .. today
   estimation:?
   assignee:-unassigned
@@ -28,7 +37,7 @@ const NO_ESTIMATION_FILTER = encodeURIComponent(`
 
 // Search filter for tasks that should be assigned
 const NO_ASSIGNEES_FILTER = encodeURIComponent(`
-  created:today,yesterday
+  created:${updatedFilter}
   assignee:unassigned
   state:unresolved,-{waiting for deploy *},-{ready for test *}
   has:-{parent for}
