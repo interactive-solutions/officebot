@@ -16,7 +16,7 @@ if (today.getDay() === 1) {
 // Search filter for tasks that should be time tracked
 const NO_TIME_SPENT_FILTER = encodeURIComponent(`
   updated:${updatedFilter}
-  created:2018-01 .. today
+  created:2017-10 .. today
   assignee:-unassigned
   state:resolved,{waiting for deploy *},{ready for test *}
   spent time:?,0m
@@ -27,7 +27,7 @@ const NO_TIME_SPENT_FILTER = encodeURIComponent(`
 // Search filter for tasks that should be estimated
 const NO_ESTIMATION_FILTER = encodeURIComponent(`
   updated:${updatedFilter}
-  created:2018-01 .. today
+  created:2017-10 .. today
   estimation:?
   assignee:-unassigned
   state:unresolved,-{waiting for deploy *},-{ready for test *}
