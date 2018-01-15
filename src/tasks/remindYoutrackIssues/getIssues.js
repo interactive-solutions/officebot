@@ -18,7 +18,7 @@ const NO_TIME_SPENT_FILTER = encodeURIComponent(`
   updated:${updatedFilter}
   created:2017-10 .. today
   assignee:-unassigned
-  state:resolved,{waiting for deploy *},{ready for test *}
+  state:{released *}, verified,{waiting for deploy *},{ready for test *}
   spent time:?,0m
   has:-{parent for}
   sort by:updated
